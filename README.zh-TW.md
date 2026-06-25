@@ -182,7 +182,7 @@ pkill -f audio_pipeline.py
 
 - **Spotify Audio Features API 已停用**：Spotify 自 2024 年 11 月起對 Developer 模式應用回傳 403。本專案以 Kaggle/HuggingFace 公開資料集加上自行 Essentia 計算繞過。
 
-- **valence 分數有西方偏差**：emomusic 模型以 Million Song Dataset（主要是西方流行和搖滾）訓練。台灣和日本的高能量曲目有時 valence 偏低，但聽起來並不負面。這些曲風用 `mood_aggressive` 和 `mood_party` 比 `valence` 可靠。
+- **valence 分數有西方偏差**：emomusic 模型以 emoMusic dataset（744 首西方流行和搖滾曲目）訓練，研究顯示在西方音樂上訓練的 valence 模型對亞洲音樂的準確率較低。台灣和日本的高能量曲目有時 valence 偏低，但實際上聽起來的負面感並不高。
 
 - **只跑一個分析器**：Essentia TensorFlow 已用盡所有 CPU 核心的 intra-op 平行度。同時跑兩個分析器不會提升吞吐量，只會減少每個進程的可用記憶體。Pipeline 強制一次只跑一個。
 

@@ -188,7 +188,7 @@ Credentials (Spotify API keys, Google Service Account) live in `~/.config/spotif
 
 - **Spotify Audio Features API disabled**: Returns 403 for Developer Mode apps since November 2024. This pipeline uses local Essentia models and Kaggle/HuggingFace reference datasets as a workaround.
 
-- **valence scores are Western-biased**: The emomusic model was trained on the Million Song Dataset (mostly Western pop/rock). High-energy tracks from Taiwan or Japan often score low valence despite sounding positive. For metal, electronic, and J-pop, `mood_aggressive` and `mood_party` are more reliable signals than `valence`.
+- **valence scores are Western-biased**: The emomusic model was trained on the emoMusic dataset (744 Western pop and rock tracks). Research shows that valence models trained on Western music have lower accuracy on Asian music. High-energy tracks from Taiwan or Japan often score low valence, even when they don't actually sound negative.
 
 - **Single analyzer, always**: Essentia's TensorFlow runtime already uses all CPU cores through intra-op parallelism. Running two analyzers concurrently doesn't increase throughput; it halves available memory per process and causes context switching. The pipeline enforces one analyzer at a time.
 
