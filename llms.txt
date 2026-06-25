@@ -1,0 +1,57 @@
+# build-your-own-spotify-listening-dna
+
+> Personal music DNA pipeline: Spotify listening history + YouTube audio download + Essentia TensorFlow analysis + behavioral engagement scoring.
+
+## What it is
+
+A self-hosted pipeline for people who want to understand their own music taste at the acoustic level, not just genre labels. It downloads your full Spotify listening history, retrieves audio from YouTube, runs 20 local acoustic feature extractors (Essentia), and lets you cluster, visualize, and get recommendations from your own 10,000+ track catalog.
+
+## Files
+
+- [README.md](README.md): Full setup and usage guide (English)
+- [README.zh-TW.md](README.zh-TW.md): 繁體中文說明
+- [README.zh-CN.md](README.zh-CN.md): 简体中文说明
+- [AGENTS.md](AGENTS.md): Step-by-step AI agent guide for helping users set up the full pipeline
+- [architecture.md](architecture.md): System architecture overview
+- [.env.example](.env.example): Credential template with instructions
+
+## Core scripts
+
+- `spotify_collector.py` — hourly Spotify recently-played collector, writes to SQLite
+- `audio_pipeline.py` — parallel download + Essentia analysis pipeline (resumable)
+- `audio_analyzer.py` — Essentia TF model runner (20 features per track)
+- `db_paths.py` — SQLite database path constants
+- `sheet_backfill_from_db.py` — sync features to Google Sheets
+
+## Phase 2 analysis (tools/)
+
+Run in order after the pipeline has analyzed 1,000+ tracks:
+
+1. `phase2_engagement.py` — engagement score per track (completion rate × skip rate × recency)
+2. `phase2_evolution.py` — taste drift chart 2017→2026
+3. `phase2_cluster.py` — K-Means clustering weighted by engagement
+4. `phase2_av_map.py` — Arousal-Valence mood map
+5. `phase2_context.py` — time-of-day listening patterns
+6. `phase2_recommend.py` — cosine similarity recommendation from your own catalog
+
+## Config files
+
+- `artist_aliases.json` — maps romanized Spotify names to YouTube search terms (mainly East Asian artists)
+- `skip_artist_keywords.json` — BGM / noise keywords to skip
+- `track_url_overrides.json` — manual Spotify track_id → YouTube URL for edge cases
+- `models/*.json` — Essentia model metadata (actual .pb files downloaded separately)
+
+## Requirements
+
+- Python 3.10+
+- macOS or Linux (launchd for continuous collection; caffeinate for long pipeline runs)
+- Spotify Developer account (free)
+- YouTube audio availability (most tracks found via yt-dlp or spotDL)
+- Optional: Google Sheets + Service Account, YouTube Data API v3, Last.fm API
+
+## Key limitations
+
+- Spotify Audio Features API returns 403 for Developer-tier apps since Nov 2024; this pipeline uses local Essentia + public Kaggle/HuggingFace datasets instead
+- Some tracks are Spotify-exclusive or not on YouTube; add manual overrides to track_url_overrides.json
+- Single Essentia analyzer per machine (TF intra-op parallelism saturates CPU; multiple instances don't help)
+- valence scores biased toward Western music (emomusic model trained on MSD)

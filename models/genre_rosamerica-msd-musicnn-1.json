@@ -1,0 +1,75 @@
+{
+    "name": "genre Rosamerica",
+    "type": "multi-class classifier",
+    "link": "https://essentia.upf.edu/models/classification-heads/genre_rosamerica/genre_rosamerica-msd-musicnn-1.pb",
+    "version": "2",
+    "description": "classification of music by genre",
+    "author": "Pablo Alonso",
+    "email": "pablo.alonso@upf.edu",
+    "release_date": "2022-08-25",
+    "framework": "tensorflow",
+    "framework_version": "2.4.0",
+    "classes": [
+        "cla",
+        "dan",
+        "hip",
+        "jaz",
+        "pop",
+        "rhy",
+        "roc",
+        "spe"
+    ],
+    "model_types": [
+        "frozen_model"
+    ],
+    "dataset": {
+        "name": "In-house MTG collection created by a musicologist",
+        "citation": "@phdthesis{i2009audio,\n  title={Audio content processing for automatic music genre classification: descriptors, databases, and classifiers},\n  author={i Termens, Enric Guaus},\n  year={2009},\n  school={PhD thesis, Universitat Pompeu Fabra, Barcelona, Spain}\n}",
+        "size": "400 tracks, 50 per genre",
+        "metrics": {
+            "5-fold_cross_validation_normalized_accuracy": 0.94
+        }
+    },
+    "schema": {
+        "inputs": [
+            {
+                "name": "model/Placeholder",
+                "type": "float",
+                "shape": [
+                    200
+                ]
+            }
+        ],
+        "outputs": [
+            {
+                "name": "model/Softmax",
+                "type": "float",
+                "shape": [
+                    8
+                ],
+                "op": "Softmax",
+                "output_purpose": "predictions"
+            },
+            {
+                "name": "model/dense/BiasAdd",
+                "type": "float",
+                "shape": [
+                    100
+                ],
+                "op": "fully connected",
+                "description": "penultimate layer",
+                "output_purpose": ""
+            }
+        ]
+    },
+    "citation": "",
+    "inference": {
+        "sample_rate": 16000,
+        "algorithm": "TensorflowPredict2D",
+        "embedding_model": {
+            "algorithm": "TensorflowPredictMusiCNN",
+            "model_name": "msd-musicnn-1",
+            "link": "https://essentia.upf.edu/models/feature-extractors/musicnn/msd-musicnn-1.pb"
+        }
+    }
+}

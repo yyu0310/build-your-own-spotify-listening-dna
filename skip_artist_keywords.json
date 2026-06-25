@@ -1,0 +1,17 @@
+{
+  "_comment": "藝人名稱含以下任一關鍵字（不分大小寫）→ pipeline 自動跳過，不嘗試下載。適用於 BGM 工廠型頻道。要加新的就直接加 keywords 陣列。",
+  "keywords": [
+    "BGM channel",
+    "Music Cafe",
+    "Instrumental Music Cafe",
+    "Study Jazz",
+    "Lofi Sleep",
+    "Relaxing Music",
+    "Meditation Music",
+    "Sleep Music",
+    "Brown Noise",
+    "White Noise",
+    "Pink Noise",
+    "Binaural"
+  ]
+}

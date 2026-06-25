@@ -1,0 +1,5 @@
+{
+  "_comment": "Manual overrides: Spotify track_id → direct YouTube URL. Add entries here for tracks that yt-dlp search cannot find (live recordings, regional releases, platform-exclusive content, Vocaloid covers mixed with human covers, etc.).",
+  "_comment_format": "Find track_id from Spotify URI (spotify:track:TRACK_ID). Find the YouTube URL of the upload you want.",
+  "_comment_example_disabled": "1234567890abcdefghijklmno: https://www.youtube.com/watch?v=VIDEO_ID"
+}

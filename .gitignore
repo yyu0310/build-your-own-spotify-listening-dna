@@ -1,0 +1,31 @@
+# Databases (generated, never commit)
+*.db
+Database/
+
+# Analysis outputs
+Output/
+*.png
+*.csv
+
+# Credentials (keep .env.example)
+.env
+.env.*
+!.env.example
+service_account.json
+*.pem
+.spotify_token_cache
+
+# Virtual environments
+.venv/
+.venv-spotdl/
+
+# Logs
+*.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store

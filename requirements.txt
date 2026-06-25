@@ -1,0 +1,21 @@
+# Core pipeline (install into .venv)
+essentia-tensorflow
+spotipy
+python-dotenv
+yt-dlp
+
+# Google Sheets sync (optional)
+gspread
+google-auth
+
+# Phase 2 analysis
+scikit-learn
+pandas
+matplotlib
+
+# YouTube URL lookup
+requests
+
+# Audio download
+# spotdl requires a separate venv due to dependency conflicts:
+#   python3 -m venv .venv-spotdl && .venv-spotdl/bin/pip install spotdl yt-dlp
