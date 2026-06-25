@@ -131,6 +131,27 @@ tail -f pipeline.log
 pkill -f audio_pipeline.py
 ```
 
+**指令說明：**
+
+- `caffeinate -i`：防止 Mac 進入睡眠，讓管道可以跑幾個小時不被中斷
+- `--workers 20`：同時開 20 條下載執行緒，每條分別在 YouTube 搜尋並下載一首歌的音訊
+- `> pipeline.log 2>&1 &`：背景執行，所有輸出（含錯誤）轉存進 `pipeline.log`，terminal 不會卡住
+- `tail -f pipeline.log`：即時追蹤進度，每分析完一首就會印一行
+
+**管道內部做了什麼：**
+
+每次執行會從 `essentia_progress.db` 取出一批狀態為 `pending` 的曲目，逐一執行以下流程：
+
+1. 用 spotDL 搜尋 YouTube Music（Spotify 內建對照表，命中率高）
+2. 若失敗，改用 yt-dlp 以 `"藝人名 歌名"` 搜尋，並套用 `artist_aliases.json` 的名稱轉換
+3. 下載音訊（AAC / Opus 格式，3–10 MB）
+4. 用 Essentia TensorFlow 模型本機分析，提取 20 個音頻特徵（約 5–10 秒 / 首）
+5. 寫入 `essentia_features.db`，刪除暫存音訊
+
+管道是**斷點續跑**的，停掉後重新執行會從上次中斷的地方繼續，不會重複分析已完成的曲目。
+
+**預期吞吐量（Apple M 系列）：** 約 300–600 首 / 小時。一萬首大約跑 20–30 小時，可以開著去睡覺。
+
 ---
 
 ## Spotify 藝人名 → YouTube 搜尋名稱對照
