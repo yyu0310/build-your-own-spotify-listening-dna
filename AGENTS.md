@@ -353,13 +353,42 @@ Replace `/path/to/project` with the absolute path to this directory.
 
 ## Troubleshooting Common Issues
 
-### "download_not_found" for many tracks
+### High `download_not_found` rate for tracks that clearly exist on YouTube
+
+If popular tracks (e.g. Billie Eilish, Taylor Swift) are failing with `download_not_found`, the pipeline may be hitting YouTube's bot detection. yt-dlp runs with `-q --no-warnings`, so 429 rate-limit errors are silently recorded as "not found" rather than surfaced as errors.
+
+Drop `--workers` to 5 and rerun:
+
+```bash
+python3 tools/reset_download_not_found.py
+caffeinate -i .venv/bin/python3 audio_pipeline.py --workers 5 --force-essentia > pipeline.log 2>&1 &
+```
+
+The `reset_download_not_found.py` script resets all `download_not_found` entries so they get retried.
+
+### "download_not_found" for East Asian tracks
 
 The yt-dlp search is looking for the wrong artist name. Check `artist_aliases.json`:
 - If the artist uses a different name on YouTube (common for East Asian artists), add an entry.
 - Format: `"Spotify Display Name": "YouTube search term or channel name"`
 
 If the track truly isn't on YouTube, add a manual override to `track_url_overrides.json`.
+
+### `ModuleNotFoundError: No module named 'essentia.tensorflow'` on Apple Silicon
+
+This is a known bug in the Essentia package on arm64 (MTG issue #1486). The submodule `essentia.tensorflow` fails to import, but the actual `TensorflowPredict*` algorithms are in `essentia.standard` and work fine.
+
+The pipeline already works around this — `audio_analyzer.py` imports only `essentia.standard`. If you see this error in your own code, replace:
+
+```python
+import essentia.tensorflow as estf  # fails on arm64
+```
+
+with:
+
+```python
+import essentia.standard as es  # TensorflowPredict* lives here
+```
 
 ### Essentia model files missing
 
