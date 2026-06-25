@@ -102,9 +102,32 @@ cp .env.example ~/.config/spotify-dna/.env
 .venv/bin/python3 spotify_collector.py
 
 # 5. Seed the database from your streaming history JSONs and start the pipeline
-#    (see AGENTS.md for the seeding command)
+#    (see AGENTS.md for the exact seeding command)
 caffeinate -i .venv/bin/python3 audio_pipeline.py --workers 20 > pipeline.log 2>&1 &
+tail -f pipeline.log   # monitor progress
+
+# Stop cleanly
+pkill -f audio_pipeline.py
 ```
+
+What each part of that command does:
+
+- `caffeinate -i`: prevents the Mac from sleeping so the pipeline can run for hours unattended
+- `--workers 20`: opens 20 parallel download threads, each searching and downloading a different track from YouTube
+- `> pipeline.log 2>&1 &`: runs in the background; all output (including errors) goes to `pipeline.log` so your terminal stays free
+- `tail -f pipeline.log`: stream progress in real time; prints one line per analyzed track
+
+What the pipeline does internally for each track:
+
+1. Search YouTube Music via spotDL (uses Spotify's own internal match, high accuracy)
+2. If that fails, fall back to yt-dlp with `"artist_name song_title"`, using `artist_aliases.json` to translate romanized Spotify names
+3. Download the audio (AAC or Opus, typically 3–10 MB per track)
+4. Run Essentia TensorFlow models locally to extract 20 acoustic features (5–10 seconds per track on Apple Silicon)
+5. Write results to `essentia_features.db`, delete the temporary audio file
+
+The pipeline is **resumable**: stopping and restarting picks up where it left off without re-analyzing completed tracks.
+
+Expected throughput on Apple M-series: 300–600 tracks per hour. Ten thousand tracks takes roughly 20–30 hours; you can leave it running overnight.
 
 Credentials (Spotify API keys, Google Service Account) live in `~/.config/spotify-dna/` (outside the repo). Set `SECRETS_DIR=/your/path` to use a different location.
 
