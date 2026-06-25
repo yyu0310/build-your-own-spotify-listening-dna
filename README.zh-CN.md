@@ -43,7 +43,7 @@ Spotify 多年来记录你听过的每一首歌。问题是，他们用这些数
 1. **spotDL**：使用 Spotify 内置的 YouTube Music 对照表搜索，命中率高
 2. **yt-dlp + 艺人别名**：spotDL 失败时，改用 `"艺人名 歌名"` 搜索，并套用 `artist_aliases.json` 把 Spotify 的罗马拼音名称转换成 YouTube 实际使用的名称（例如 "Jay Chou" → "周杰伦"，"Stefanie Sun" → "孙燕姿"）
 
-下载以 20 条线程并行跑。下完的文件进 `audio_analyzer.py`，依序跑 Essentia TensorFlow 模型（Essentia 已经占满所有 CPU 核心，多开分析器不会加速，只会多占内存）。每首分析约 5–10 秒（Apple Silicon）。
+下载以 20 条线程并行跑。下完的文件进 `audio_analyzer.py`，依序跑 Essentia TensorFlow 模型。Essentia 本身已吃满所有 CPU 核心，同时跑多个分析器不会加速，只会多占内存。作者的 MacBook Air M3 16GB RAM 上每首约 5–10 秒。
 
 30 MB 大小守卫拦截搜索错误的结果；单首歌的 AAC 或 Opus 通常 3–10 MB，超过代表抓到了合辑或错误版本。
 

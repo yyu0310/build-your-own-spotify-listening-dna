@@ -45,7 +45,7 @@ For historical data, Spotify offers a full export of your Extended Streaming His
 1. **spotDL**: tries Spotify's own internal YouTube Music match for the track
 2. **yt-dlp with artist alias**: if spotDL fails, falls back to `"artist_name song_title"` search using `artist_aliases.json` to translate romanized Spotify names to the names YouTube actually uses (e.g., "Jay Chou" → "周杰倫", "Stefanie Sun" → "孫燕姿")
 
-Downloads run in parallel (20 workers by default). Each downloaded file goes into `audio_analyzer.py`, which runs Essentia's TensorFlow models sequentially (Essentia already saturates all CPU cores internally, so multiple concurrent analyzers don't help). Each track analysis takes roughly 5–10 seconds on Apple Silicon.
+Downloads run in parallel (20 workers by default). Each downloaded file goes into `audio_analyzer.py`, which runs Essentia's TensorFlow models one at a time. Essentia already saturates all CPU cores internally, so running multiple analyzers concurrently doesn't help and only increases memory pressure. On the author's MacBook Air M3 16GB, each track takes roughly 5–10 seconds.
 
 A 30 MB file size guard catches mismatched results; a single song in AAC or Opus should be 3–10 MB. Anything larger is probably a compilation or a wrong match.
 
